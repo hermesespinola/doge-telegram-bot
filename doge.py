@@ -1,5 +1,5 @@
 from telegram.ext import Updater
-updater = Updater(token='token')
+updater = Updater(token='506784722:AAGkiW51Q24giZ8fesYilANwRZfaTffN0t4')
 dispatcher = updater.dispatcher
 
 words = ['doge', 'bot', 'python', 'grrrrr']
