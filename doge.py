@@ -1,7 +1,8 @@
 from telegram.ext import Updater
-updater = Updater(token='506784722:AAGkiW51Q24giZ8fesYilANwRZfaTffN0t4')
+updater = Updater(token='token')
 dispatcher = updater.dispatcher
 
+doge_words = ['such ', 'much ', 'very ', 'so ', 'many ', 'how ']
 words = ['doge', 'bot', 'python', 'grrrrr']
 max_words_len = 500
 
@@ -10,16 +11,20 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
     level=logging.INFO)
 
 def start(bot, update):
-	bot.send_message(chat_id=update.message.chat_id, text="I'm Da Dogebot!")
+	bot.send_message(chat_id=update.message.chat_id, text="""I'm Da Dogebot!
+    Use /doge to create an image or talk to me to learn new words""")
 
 from telegram.ext import CommandHandler
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
+from stop_words import get_stop_words
+stop_words = get_stop_words('english') + get_stop_words('spanish')
 def echo(bot, update):
     global words
     chat_id = update.message.chat_id
-    words += update.message.text.split(' ')
+    words += list(filter(lambda w: w not in stop_words and w not in words and w not in doge_words,
+            update.message.text.split(' ')))
     for _ in range(len(words) - max_words_len):
         words.pop(0)
     text_caps = ' '.join(update.message.text.upper())
@@ -29,7 +34,6 @@ from telegram.ext import MessageHandler, Filters
 echo_handler = MessageHandler(Filters.text, echo)
 dispatcher.add_handler(echo_handler)
 
-doge_words = ['such ', 'much ', 'very ', 'so ', 'many ', 'how ']
 from random import shuffle, choice
 def doge(bot, update, args):
     global words
@@ -37,7 +41,7 @@ def doge(bot, update, args):
     if not args:
         args = [choice(words),choice(words),choice(words),choice(words),choice(words),choice(words)]
     else:
-        words += list(filter(lambda w: w not in words and w not in doge_words, args))
+        words += list(filter(lambda w: w not in stop_words and w not in words and w not in doge_words, args))
         for _ in range(len(words) - max_words_len):
             word.pop(0)
         shuffle(doge_words)
