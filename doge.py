@@ -24,7 +24,7 @@ def echo(bot, update):
     global words
     chat_id = update.message.chat_id
     words += list(filter(lambda w: w not in stop_words and w not in words and w not in doge_words,
-            update.message.text.split(' ')))
+            update.message.text.lower().split(' ')))
     for _ in range(len(words) - max_words_len):
         words.pop(0)
     text_caps = ' '.join(update.message.text.upper())
@@ -38,10 +38,12 @@ from random import shuffle, choice
 def doge(bot, update, args):
     global words
     chat_id = update.message.chat_id
+    args = list(filter(lambda w: w not in stop_words and w not in words and w not in doge_words,
+        map(lambda w: w.lower(), args)))
     if not args:
         args = [choice(words),choice(words),choice(words),choice(words),choice(words),choice(words)]
     else:
-        words += list(filter(lambda w: w not in stop_words and w not in words and w not in doge_words, args))
+        words += args
         for _ in range(len(words) - max_words_len):
             word.pop(0)
         shuffle(doge_words)
